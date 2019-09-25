@@ -1,0 +1,12 @@
+@charset "UTF-8";
+body, td, th {
+font-family: 맑은 고딕; font-size: 14px;
+}
+.cls1 {
+font-family: 맑은 고딕;
+font-size: 14px; background: #D4F4FA;
+}
+.cls2 {
+font-family: 맑은 고딕;
+}
+font-size: 13px; background: #E4F7BA;
