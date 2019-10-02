@@ -12,8 +12,8 @@ public class MemberDAO {
 	private Connection getConnection() {
 		Connection conn = null;
 		try {
-			Class.forName("com.mysql.jdbc.Driver");
-			conn = DriverManager.getConnection("jdbc:mysql://remotemysql.com:3306/I4Jg66y62Y","I4Jg66y62Y","Ld6west95X");
+			Class.forName("oracle.jdbc.driver.OracleDriver");
+			conn = DriverManager.getConnection("jdbc:oracle:thin:@localhost:59161:xe","system","oracle");
 		} catch (ClassNotFoundException e) {
 			System.out.println("driver not found");
 		} catch (SQLException e) {
@@ -30,7 +30,7 @@ public class MemberDAO {
 		try {
 			conn = getConnection();
 			
-			String sql = "SELECT * FROM MEMBER";
+			String sql = "select * from member";
 			ps = conn.prepareStatement(sql);
 			
 			rs = ps.executeQuery();
@@ -63,39 +63,43 @@ public class MemberDAO {
 	}
 	
 	
-	public boolean idAvailableChk(String id) { //중복확인
+	public boolean idAvailableChk(String id) {
 		boolean result = false;
+		Connection conn = null;
 		ResultSet rs = null;
 		PreparedStatement ps = null;
-		Connection conn = null;
-		String checkSql = "SELECT * FROM MEMBER where id= ?";
+		
 		try {
 			conn = getConnection();
-			ps = conn.prepareStatement(checkSql);
+			
+			String sql = "select * from member where id=?";
+			ps = conn.prepareStatement(sql);
 			ps.setString(1, id);
 			
 			rs = ps.executeQuery();
 			if(!rs.next()) result = true;
 			
 		} catch (SQLException e) {
-
+			e.printStackTrace();
 		} finally {
-			
+			try { if(ps!=null) ps.close();} catch(SQLException e) { }
+			try { if(rs!=null) rs.close();} catch(SQLException e) { }
+			try { if(conn!=null) conn.close();} catch(SQLException e) { }
 		}
 		return result;
 	}
 	
-	
 	public boolean insertMember(MemberDTO dto) {
 		boolean result = false;
-		PreparedStatement ps = null;
 		Connection conn = null;
 		ResultSet rs = null;
-		String insertSql = "INSERT INTO MEMBER (name, id, pass, birth, gender, job, address, regdate) VALUES(?,?,?,?,?,?,?,?);";
-						
+		PreparedStatement ps = null;
+		
 		try {
 			conn = getConnection();
-			ps = conn.prepareStatement(insertSql);
+			
+			String sql = "insert into member values(?,?,?,?,?,?,?,sysdate)";
+			ps = conn.prepareStatement(sql);
 			ps.setString(1, dto.getName());
 			ps.setString(2, dto.getId());
 			ps.setString(3, dto.getPass());
@@ -103,35 +107,34 @@ public class MemberDAO {
 			ps.setString(5, dto.getGender());
 			ps.setString(6, dto.getJob());
 			ps.setString(7, dto.getAddress());
-			ps.setDate(8, dto.getRegDate());
 			
 			int n = ps.executeUpdate();
 			if(n>0) result = true;
-
-		} catch (SQLException e) {
 			
+		} catch (SQLException e) {
+			e.printStackTrace();
 		} finally {
-
+			try { if(ps!=null) ps.close();} catch(SQLException e) { }
+			try { if(rs!=null) rs.close();} catch(SQLException e) { }
+			try { if(conn!=null) conn.close();} catch(SQLException e) { }
 		}
 		return result;
+		
 	}
-	
 	
 	public int loginCheck(String id, String pass) {
 		int result = -1; // -1: not found  0: pwd error  1: success
 		Connection conn = null;
-		PreparedStatement ps = null;
 		ResultSet rs = null;
-		String loginCheckSql = "SELECT * FROM MEMBER WHERE ID= ? AND PASS = ?";
+		PreparedStatement ps = null;
 		try {
 			conn = getConnection();
-			ps = conn.prepareStatement(loginCheckSql);
-			ps.setString(1, id);
-			ps.setString(2, pass);
 			
+			String sql = "select pass from member where id = ?";
+			ps = conn.prepareStatement(sql);
+			ps.setString(1, id);
 			rs = ps.executeQuery();
 			if (rs.next()) {
-				System.out.println("ASd");
 				String dbPass = rs.getString("pass");
 				if (dbPass.equals(pass)) {
 					result = 1;
@@ -148,6 +151,45 @@ public class MemberDAO {
 		}
 		return result;
 	}
+	
+//	public selectMember() {
+//		
+//		try {
+//		
+//			
+//			
+//		} catch (SQLException e) {
+//
+//		} finally {
+//		
+//		}
+//	}
+//	
+//	public updateMember() {
+//
+//		try {
+//
+//
+//			
+//		} catch (SQLException e) {
+//
+//		} finally {
+//		
+//		}
+//	}
+//	
+//	public deleteMember() {
+//		
+//		try {
+//
+//			
+//			
+//		} catch (SQLException e) {
+//
+//		} finally {
+//
+//		}
+//	}
 	
 	
 }

@@ -8,10 +8,10 @@
 	
 	int counter = 0;
 	
-	Class.forName("com.mysql.jdbc.Driver");
-	conn = DriverManager.getConnection("jdbc:mysql://remotemysql.com:3306/I4Jg66y62Y","I4Jg66y62Y","Ld6west95X");
+	Class.forName("oracle.jdbc.driver.OracleDriver");
+	conn = DriverManager.getConnection("jdbc:oracle:thin:@localhost:59161:xe","system","oracle");
 	
-	String sql = "select * from MEMBER";
+	String sql = "select * from member";
 	ps = conn.prepareStatement(sql);
 	rs = ps.executeQuery();
 %>
