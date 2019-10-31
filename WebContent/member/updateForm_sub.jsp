@@ -1,8 +1,10 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
-<%@ page import=""%>
+<%@ page import="my.member.*"%>
+<jsp:useBean id="dao" class="my.member.MemberDAO" />
 <%
-	dao.selectMember(id);
+	String id = (String) session.getAttribute("loginId");
+	MemberDTO dto = dao.selectMember(id);
 %>
 <!DOCTYPE html>
 <html>

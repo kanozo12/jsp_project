@@ -1,6 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
-<jsp:useBean id="dao" class="my.member.MemberDAO"/>
+<jsp:useBean id="dao" class="my.member.MemberDAO"></jsp:useBean>
 <!DOCTYPE html>
 <html>
 <head>
@@ -10,8 +10,8 @@
 </head>
 <body>
 	<%
-		String id = (String) session.getAttribute("id");
-		String pass = (String) session.getAttribute("pass");
+		String id = (String) session.getAttribute("loginId");
+		String pass = request.getParameter("pass");
 		boolean rst = dao.deleteMember(id, pass);
 	%>
 	<%

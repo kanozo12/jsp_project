@@ -152,44 +152,89 @@ public class MemberDAO {
 		return result;
 	}
 	
-//	public selectMember() {
-//		
-//		try {
-//		
-//			
-//			
-//		} catch (SQLException e) {
-//
-//		} finally {
-//		
-//		}
-//	}
-//	
-//	public updateMember() {
-//
-//		try {
-//
-//
-//			
-//		} catch (SQLException e) {
-//
-//		} finally {
-//		
-//		}
-//	}
-//	
-//	public deleteMember() {
-//		
-//		try {
-//
-//			
-//			
-//		} catch (SQLException e) {
-//
-//		} finally {
-//
-//		}
-//	}
+	public MemberDTO selectMember(String id) {
+		Connection conn = null;
+		ResultSet rs = null;
+		PreparedStatement ps = null;
+		List<MemberDTO> list = new ArrayList<MemberDTO>();
+		try {
+			conn = getConnection();
+			
+			String sql = "select * from member where id=?";
+			ps = conn.prepareStatement(sql);
+			ps.setString(1, id);
+			
+			rs = ps.executeQuery();
+			list = makeArray(rs);
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			try { if(ps!=null) ps.close();} catch(SQLException e) { }
+			try { if(rs!=null) rs.close();} catch(SQLException e) { }
+			try { if(conn!=null) conn.close();} catch(SQLException e) { }
+		}
+		return list.get(0);
+	}
 	
+	public boolean updateMember(MemberDTO dto) {
+		boolean result = false;
+		Connection conn = null;
+		PreparedStatement ps = null;
+		try {
+			conn = getConnection();
+			
+			String sql = "update member set pass=?, birth=?, gender=?, job=?, address=? where id=?";
+			
+			ps = conn.prepareStatement(sql);
+			ps.setString(1, dto.getPass());
+			ps.setInt(2, dto.getBirth());
+			ps.setString(3, dto.getGender());
+			ps.setString(4, dto.getJob());
+			ps.setString(5, dto.getAddress());
+			ps.setString(6, dto.getId());
+			
+			int n = ps.executeUpdate();
+			if (n>0) result = true;
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			try { if(ps!=null) ps.close();} catch(SQLException e) { }
+			try { if(conn!=null) conn.close();} catch(SQLException e) { }
+		}
+		return result;
+	}
 	
+	public boolean deleteMember(String id, String pass) {
+		boolean result = false;
+		Connection conn = null;
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		try {
+			conn = getConnection();
+			
+			String sql = "select * from member where id=?";
+			ps = conn.prepareStatement(sql);
+			ps.setString(1, id);
+			rs = ps.executeQuery();
+			int n=0;
+			if (rs.next()) {
+				String dbPass = rs.getString("pass");
+				if (dbPass.equals(pass)) {
+					sql = "delete from member where id=?";
+					ps = conn.prepareStatement(sql);
+					ps.setString(1, id);
+					n = ps.executeUpdate();
+				}
+			}
+			if (n>0) result = true;
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			try { if(ps!=null) ps.close();} catch(SQLException e) { }
+			try { if(conn!=null) conn.close();} catch(SQLException e) { }
+		}
+		return result;
+		
+	}
 }

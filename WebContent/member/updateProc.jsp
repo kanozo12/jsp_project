@@ -3,8 +3,8 @@
 <%
 	request.setCharacterEncoding("UTF-8");
 %>
-<jsp:useBean id="dao" class=""/>
-<jsp:useBean id="dto" class=""/>
+<jsp:useBean id="dao" class="my.member.MemberDAO"/>
+<jsp:useBean id="dto" class="my.member.MemberDTO"/>
 <jsp:setProperty property="*" name="dto"/>
 <!DOCTYPE html>
 <html>
@@ -14,8 +14,9 @@
 </head>
 <body>
 <%
+	String id = (String)session.getAttribute("loginId");
 	dto.setId(id);
-	dao.updateMember(dto);
+	boolean rst = dao.updateMember(dto);
 	
 	if(rst) {
 %>
